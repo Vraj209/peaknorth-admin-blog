@@ -14,7 +14,7 @@ const router = Router();
  */
 router.get('/ready',
   authenticateApiKey,
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (_req, res) => {
     const posts = await BlogPostService.getReadyToPublishPosts();
     
     const response: ApiResponse = {
@@ -68,15 +68,16 @@ router.get('/stats',
  */
 router.post('/batch',
   authenticateApiKey,
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req, res): Promise<void> => {
     const { postIds } = req.body;
     
     if (!Array.isArray(postIds) || postIds.length === 0) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         error: 'postIds array is required',
         timestamp: Date.now(),
       });
+      return;
     }
     
     const results = [];
@@ -168,15 +169,16 @@ router.get('/schedule',
  */
 router.post('/webhook',
   authenticateApiKey,
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req, res): Promise<void> => {
     const { postId, status, publicUrl, error } = req.body;
     
     if (!postId) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         error: 'postId is required',
         timestamp: Date.now(),
       });
+      return;
     }
     
     try {

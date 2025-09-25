@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { ZodError } from 'zod';
 import logger from '../utils/logger';
-import { ApiError, ApiResponse } from '../types/common';
+import { ApiResponse } from '../types/common';
 import { isDevelopment } from '../config/environment';
 
 // Custom error classes
@@ -27,7 +27,7 @@ export class AppError extends Error {
 }
 
 export class ValidationError extends AppError {
-  constructor(message: string, details?: any) {
+  constructor(message: string, _details?: any) {
     super(message, StatusCodes.BAD_REQUEST, 'VALIDATION_ERROR');
     this.name = 'ValidationError';
   }
@@ -73,7 +73,7 @@ export const errorHandler = (
   error: Error,
   req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ): void => {
   let statusCode = StatusCodes.INTERNAL_SERVER_ERROR;
   let code = 'INTERNAL_ERROR';
@@ -102,7 +102,7 @@ export const errorHandler = (
     details = error.errors.map((err) => ({
       field: err.path.join('.'),
       message: err.message,
-      value: err.input,
+      value: (err as any).input,
     }));
   } else if (error.name === 'ValidationError') {
     statusCode = StatusCodes.BAD_REQUEST;
@@ -158,7 +158,7 @@ export const errorHandler = (
 // 404 handler
 export const notFoundHandler = (
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ): void => {
   const error = new NotFoundError(`Route ${req.originalUrl} not found`);

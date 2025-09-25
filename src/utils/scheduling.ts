@@ -52,7 +52,7 @@ export function computeNextSlots(
 export function formatScheduledTime(
   timestamp: number, 
   timezone: string, 
-  formatStr: string = 'PPP p'
+  _formatStr: string = 'PPP p'
 ): string {
   return DateTime
     .fromMillis(timestamp)
@@ -98,7 +98,11 @@ export function getRelativeTimeString(timestamp: number): string {
  */
 export function shouldCreateDraft(config: CadenceConfig): boolean {
   const now = DateTime.now().setZone(config.timezone);
-  const slots = computeNextSlots(now.toISO(), config);
+  const nowIso = now.toISO();
+  if (!nowIso) {
+    throw new Error('Failed to convert DateTime to ISO string');
+  }
+  const slots = computeNextSlots(nowIso, config);
   
   // Check if we've reached the create time
   return now.toMillis() >= slots.createAt;
@@ -114,7 +118,11 @@ export function getUpcomingSlots(
   const now = DateTime.now().setZone(config.timezone);
   const slots: Array<{ publishAt: number; createAt: number }> = [];
   
-  let currentSlot = computeNextSlots(now.toISO(), config);
+  const nowIso = now.toISO();
+  if (!nowIso) {
+    throw new Error('Failed to convert DateTime to ISO string');
+  }
+  let currentSlot = computeNextSlots(nowIso, config);
   
   for (let i = 0; i < count; i++) {
     slots.push({
@@ -125,7 +133,11 @@ export function getUpcomingSlots(
     // Calculate next slot
     const nextTime = DateTime.fromMillis(currentSlot.scheduledAt)
       .plus({ days: config.intervalDays });
-    currentSlot = computeNextSlots(nextTime.toISO(), config);
+    const nextTimeIso = nextTime.toISO();
+    if (!nextTimeIso) {
+      throw new Error('Failed to convert DateTime to ISO string');
+    }
+    currentSlot = computeNextSlots(nextTimeIso, config);
   }
   
   return slots;

@@ -117,7 +117,7 @@ class InMemoryCache {
     let totalSize = 0;
     const tagCounts: Record<string, number> = {};
 
-    for (const [key, entry] of this.cache.entries()) {
+    for (const [_key, entry] of this.cache.entries()) {
       totalSize++;
       
       if (now > entry.expiresAt) {

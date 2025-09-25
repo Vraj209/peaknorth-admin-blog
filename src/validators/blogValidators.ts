@@ -290,7 +290,7 @@ export const commonQuerySchema = z.object({
 
 // Validation middleware helper
 export const validateSchema = (schema: z.ZodSchema) => {
-  return (req: any, res: any, next: any) => {
+  return (req: any, _res: any, next: any) => {
     try {
       const validatedData = schema.parse(req.body);
       req.body = validatedData;
@@ -302,7 +302,7 @@ export const validateSchema = (schema: z.ZodSchema) => {
 };
 
 export const validateQuery = (schema: z.ZodSchema) => {
-  return (req: any, res: any, next: any) => {
+  return (req: any, _res: any, next: any) => {
     try {
       const validatedQuery = schema.parse(req.query);
       req.query = validatedQuery;
@@ -314,7 +314,7 @@ export const validateQuery = (schema: z.ZodSchema) => {
 };
 
 export const validateParams = (schema: z.ZodSchema) => {
-  return (req: any, res: any, next: any) => {
+  return (req: any, _res: any, next: any) => {
     try {
       const validatedParams = schema.parse(req.params);
       req.params = validatedParams;

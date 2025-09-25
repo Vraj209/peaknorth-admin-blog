@@ -176,16 +176,13 @@ export class BlogPostService {
       await postRef.update(updateData);
 
       // Auto-update status based on content updates
-      let statusUpdate = false;
       const currentPost = { ...postDoc.data(), id: postDoc.id } as BlogPost;
       
       if (updates.outline && currentPost.status === 'BRIEF') {
         await postRef.update({ status: 'OUTLINE' });
-        statusUpdate = true;
         logger.info('Auto-updated post status to OUTLINE', { postId });
       } else if (updates.draft_mdx && currentPost.status === 'OUTLINE') {
         await postRef.update({ status: 'DRAFT' });
-        statusUpdate = true;
         logger.info('Auto-updated post status to DRAFT', { postId });
       }
 

@@ -59,19 +59,18 @@ router.get('/',
     const { 
       status, 
       category, 
-      authorId, 
       search, 
       dateFrom, 
       dateTo 
     } = req.query;
     
-    const filters = {
-      status: status as PostStatus,
-      category: category as string,
-      search: search as string,
-      dateFrom: dateFrom ? new Date(dateFrom as string).getTime() : undefined,
-      dateTo: dateTo ? new Date(dateTo as string).getTime() : undefined,
-    };
+    const filters: any = {};
+    
+    if (status) filters.status = status as PostStatus;
+    if (category) filters.category = category as string;
+    if (search) filters.search = search as string;
+    if (dateFrom) filters.dateFrom = new Date(dateFrom as string).getTime();
+    if (dateTo) filters.dateTo = new Date(dateTo as string).getTime();
     
     const posts = await BlogPostService.getAllPosts(filters);
     
@@ -98,7 +97,7 @@ router.get('/',
  */
 router.get('/stats',
   optionalApiKey,
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (_req, res) => {
     const stats = await BlogPostService.getPostStats();
     
     const response: ApiResponse = {
@@ -141,7 +140,7 @@ router.get('/:id',
   optionalApiKey,
   validateParams(idParamSchema),
   asyncHandler(async (req, res) => {
-    const post = await BlogPostService.getPostById(req.params.id);
+    const post = await BlogPostService.getPostById(req.params.id!);
     
     const response: ApiResponse = {
       success: true,
@@ -163,7 +162,7 @@ router.put('/:id',
   validateParams(idParamSchema),
   validateSchema(updatePostSchema),
   asyncHandler(async (req, res) => {
-    const post = await BlogPostService.updatePost(req.params.id, req.body);
+    const post = await BlogPostService.updatePost(req.params.id!, req.body);
     console.log(post)
     const response: ApiResponse = {
       success: true,
@@ -192,7 +191,7 @@ router.post('/:id/status',
   validateParams(idParamSchema),
   validateSchema(updatePostStatusSchema),
   asyncHandler(async (req, res) => {
-    const post = await BlogPostService.updatePostStatus(req.params.id, req.body);
+    const post = await BlogPostService.updatePostStatus(req.params.id!, req.body);
     
     const response: ApiResponse = {
       success: true,
@@ -221,7 +220,7 @@ router.post('/:id/publish',
   validateParams(idParamSchema),
   validateSchema(publishPostSchema),
   asyncHandler(async (req, res) => {
-    const post = await BlogPostService.publishPost(req.params.id);
+    const post = await BlogPostService.publishPost(req.params.id!);
     
     const response: ApiResponse = {
       success: true,
@@ -248,7 +247,7 @@ router.delete('/:id',
   optionalApiKey,
   validateParams(idParamSchema),
   asyncHandler(async (req, res) => {
-    await BlogPostService.deletePost(req.params.id);
+    await BlogPostService.deletePost(req.params.id!);
     
     const response: ApiResponse = {
       success: true,

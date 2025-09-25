@@ -56,12 +56,17 @@ router.get('/',
   asyncHandler(async (req, res) => {
     const { used, priority, category, search } = req.query;
     
-    const filters = {
-      used: used !== undefined ? Boolean(used) : undefined,
-      priority: priority ? [priority].flat() : undefined,
-      tags: category ? [category] : undefined,
-      search: search as string,
-    };
+    const filters: {
+      used?: boolean;
+      priority?: any[];
+      tags?: any[];
+      search?: string;
+    } = {};
+    
+    if (used !== undefined) filters.used = Boolean(used);
+    if (priority) filters.priority = [priority].flat() as any;
+    if (category) filters.tags = [category] as any;
+    if (search) filters.search = search as string;
     
     const ideas = await BlogIdeaService.getAllIdeas(filters);
     
@@ -88,7 +93,7 @@ router.get('/',
  */
 router.get('/pick',
   authenticateApiKey,
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (_req, res) => {
     const idea = await BlogIdeaService.pickNextIdea();
     
     if (!idea) {
@@ -113,7 +118,7 @@ router.get('/pick',
       priority: idea.priority 
     });
     
-    res.json(response);
+    return res.json(response);
   })
 );
 
@@ -124,7 +129,7 @@ router.get('/pick',
  */
 router.get('/unused',
   optionalApiKey,
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (_req, res) => {
     const ideas = await BlogIdeaService.getUnusedIdeas();
     
     const response: ApiResponse = {
@@ -144,7 +149,7 @@ router.get('/unused',
  */
 router.get('/stats',
   optionalApiKey,
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (_req, res) => {
     const stats = await BlogIdeaService.getIdeaStats();
     
     const response: ApiResponse = {
@@ -166,7 +171,7 @@ router.get('/:id',
   optionalApiKey,
   validateParams(idParamSchema),
   asyncHandler(async (req, res) => {
-    const idea = await BlogIdeaService.getIdeaById(req.params.id);
+    const idea = await BlogIdeaService.getIdeaById(req.params.id!);
     
     const response: ApiResponse = {
       success: true,
@@ -188,7 +193,7 @@ router.put('/:id',
   validateParams(idParamSchema),
   validateSchema(updateBlogIdeaSchema),
   asyncHandler(async (req, res) => {
-    const idea = await BlogIdeaService.updateIdea(req.params.id, req.body);
+    const idea = await BlogIdeaService.updateIdea(req.params.id!, req.body);
     
     const response: ApiResponse = {
       success: true,
@@ -216,7 +221,7 @@ router.post('/:id/use',
   authenticateApiKey,
   validateParams(idParamSchema),
   asyncHandler(async (req, res) => {
-    await BlogIdeaService.markIdeaAsUsed(req.params.id);
+    await BlogIdeaService.markIdeaAsUsed(req.params.id!);
     
     const response: ApiResponse = {
       success: true,
@@ -239,7 +244,7 @@ router.post('/:id/reset',
   optionalApiKey,
   validateParams(idParamSchema),
   asyncHandler(async (req, res) => {
-    await BlogIdeaService.resetIdea(req.params.id);
+    await BlogIdeaService.resetIdea(req.params.id!);
     
     const response: ApiResponse = {
       success: true,
@@ -265,7 +270,7 @@ router.delete('/:id',
   optionalApiKey,
   validateParams(idParamSchema),
   asyncHandler(async (req, res) => {
-    await BlogIdeaService.deleteIdea(req.params.id);
+    await BlogIdeaService.deleteIdea(req.params.id!);
     
     const response: ApiResponse = {
       success: true,

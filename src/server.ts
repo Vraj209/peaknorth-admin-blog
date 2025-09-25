@@ -10,8 +10,7 @@ import {
   serverConfig, 
   urlsConfig, 
   securityConfig, 
-  featureFlagsConfig,
-  isDevelopment 
+  featureFlagsConfig
 } from './config/environment';
 import { databaseManager } from './config/database';
 
@@ -124,7 +123,7 @@ if (featureFlagsConfig.enableRequestLogging) {
 }
 
 // Health check endpoint
-app.get('/health', async (req, res) => {
+app.get('/health', async (_req, res) => {
   try {
     const healthStatus = await databaseManager.healthCheck();
     const status: HealthStatus = {
@@ -132,7 +131,10 @@ app.get('/health', async (req, res) => {
       timestamp: Date.now(),
       version: process.env.npm_package_version || '1.0.0',
       uptime: process.uptime(),
-      services: healthStatus,
+      services: {
+        firebase: healthStatus.firebase ? 'up' : 'down',
+        cache: healthStatus.cache ? 'up' : 'down'
+      },
       environment: serverConfig.nodeEnv,
     };
 
@@ -159,7 +161,7 @@ app.use(`${API_PREFIX}/posts`, postsRoutes);
 app.use(`${API_PREFIX}/publish`, publishRoutes);
 
 // API info endpoint
-app.get(serverConfig.apiPrefix, (req, res) => {
+app.get(serverConfig.apiPrefix, (_req, res) => {
   const response: ApiResponse = {
     success: true,
     data: {

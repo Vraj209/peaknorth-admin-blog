@@ -19,13 +19,13 @@ export class BlogIdeaService {
         topic: ideaData.topic.trim(),
         persona: ideaData.persona.trim(),
         goal: ideaData.goal.trim(),
-        targetAudience: ideaData.targetAudience?.trim(),
+        targetAudience: ideaData.targetAudience?.trim() || '',
         priority: ideaData.priority,
-        difficulty: ideaData.difficulty,
         used: false,
         createdAt: Date.now(),
         tags: ideaData.tags?.map(tag => tag.trim().toLowerCase()) || [],
-        notes: ideaData.notes?.trim(),
+        ...(ideaData.difficulty && { difficulty: ideaData.difficulty }),
+        ...(ideaData.notes?.trim() && { notes: ideaData.notes.trim() }),
       };
 
       await db.collection(this.COLLECTION).doc(idea.id).set(idea);
@@ -123,6 +123,10 @@ export class BlogIdeaService {
       });
 
       const selectedIdea = unusedIdeas[0];
+      if (!selectedIdea) {
+        return null;
+      }
+      
       logger.info('Idea picked for content creation', { 
         ideaId: selectedIdea.id, 
         topic: selectedIdea.topic,
