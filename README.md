@@ -1,8 +1,8 @@
-# PeakNorth Blog Automation - Backend API
+# PeakNorth Blog Automation - Backend
 
 A robust, scalable Node.js backend API for the PeakNorth Blog Automation System, built with modern TypeScript, Express, and Firebase.
 
-## 🚀 Features
+## Features
 
 - **Modular Architecture**: Clean separation of concerns with services, routes, and middleware
 - **Type Safety**: Full TypeScript implementation with strict type checking
@@ -15,9 +15,9 @@ A robust, scalable Node.js backend API for the PeakNorth Blog Automation System,
 - **Error Handling**: Centralized error handling with detailed error responses
 - **Health Monitoring**: Built-in health checks and system monitoring
 
-## 📋 System Architecture
+## System Architecture
 
-```
+```   
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
 │   N8N Workflows │    │   Backend API    │    │   Firebase      │
 │                 │◄──►│                  │◄──►│   Firestore     │
@@ -33,7 +33,7 @@ A robust, scalable Node.js backend API for the PeakNorth Blog Automation System,
                        └──────────────────┘
 ```
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Runtime**: Node.js 18+
 - **Language**: TypeScript 5.3+
@@ -46,7 +46,7 @@ A robust, scalable Node.js backend API for the PeakNorth Blog Automation System,
 - **Caching**: In-memory cache
 - **Security**: Helmet, CORS, Rate Limiting
 
-## 📦 Installation
+## Installation
 
 ### Prerequisites
 
@@ -89,34 +89,59 @@ npm run dev
 npm start
 ```
 
-## ⚙️ Configuration
+## Configuration
 
 ### Environment Variables
 
 ```env
-# Server Configuration
-NODE_ENV=development
-PORT=3001
-API_VERSION=v1
-API_PREFIX=/api
+NODE_ENV=
+PORT=
+API_VERSION=
+API_PREFIX=
 
-# Firebase Configuration
-FIREBASE_PROJECT_ID=your-project-id
-FIREBASE_SERVICE_ACCOUNT_KEY={"type":"service_account",...}
+FIREBASE_PROJECT_ID=
+FIREBASE_DATABASE_URL=
+FIREBASE_STORAGE_BUCKET=
+FIREBASE_SERVICE_ACCOUNT_KEY=
 
-# Security
-JWT_SECRET=your-super-secure-jwt-secret
-N8N_API_KEY=your-secure-api-key-for-n8n
+JWT_SECRET=
+JWT_EXPIRES_IN=
+JWT_REFRESH_EXPIRES_IN=
 
-# External Services
-OPENAI_API_KEY=sk-your-openai-key
-SMTP_HOST=smtp.gmail.com
-SMTP_USER=your-email@gmail.com
-SMTP_PASS=your-app-password
+RATE_LIMIT_WINDOW_MS=
+RATE_LIMIT_MAX_REQUESTS=
 
-# URLs
-FRONTEND_URL=https://your-admin-domain.com
-PUBLIC_BLOG_URL=https://your-blog-domain.com
+OPENAI_API_KEY=
+OPENAI_MODEL=
+OPENAI_MAX_TOKENS=
+
+N8N_API_KEY=
+
+SMTP_HOST=
+SMTP_PORT=
+SMTP_SECURE=
+SMTP_USER=
+SMTP_PASS=
+EMAIL_FROM=
+
+FRONTEND_URL=
+ADMIN_DASHBOARD_URL=
+PUBLIC_BLOG_URL=
+
+LOG_LEVEL=
+LOG_FORMAT=
+LOG_FILE_PATH=
+
+ENABLE_CACHING=
+ENABLE_RATE_LIMITING=
+ENABLE_REQUEST_LOGGING=
+ENABLE_CORS=
+
+SENTRY_DSN=
+GOOGLE_ANALYTICS_ID=
+
+DEBUG=
+MOCK_EXTERNAL_SERVICES=
 ```
 
 ### Firebase Setup
@@ -131,7 +156,7 @@ PUBLIC_BLOG_URL=https://your-blog-domain.com
    - Login: `firebase login`
    - Set application default credentials: `gcloud auth application-default login`
 
-## 🔌 API Endpoints
+## API Endpoints
 
 ### Health & Info
 
@@ -172,7 +197,7 @@ PUBLIC_BLOG_URL=https://your-blog-domain.com
 - `POST /api/v1/publish/batch` - Batch publish (n8n only)
 - `POST /api/v1/publish/webhook` - Publishing webhook (n8n only)
 
-## 🔐 Authentication
+## Authentication
 
 ### API Key Authentication
 
@@ -190,7 +215,7 @@ Some endpoints are publicly accessible for the admin dashboard:
 - `GET /api/v1/posts` (with optional API key)
 - Health and info endpoints
 
-## 📊 Data Models
+## Data Models
 
 ### Blog Idea
 
@@ -241,7 +266,7 @@ interface BlogPost {
 }
 ```
 
-## 🔄 N8N Workflow Integration
+## N8N Workflow Integration
 
 ### Workflow A: Cadence Planner
 
@@ -267,7 +292,7 @@ interface BlogPost {
 - Publishes post immediately
 - Updates status to PUBLISHED
 
-## 🧪 Development
+## Development
 
 ### Scripts
 
@@ -322,7 +347,7 @@ src/
 └── server.ts        # Main application
 ```
 
-## 🚨 Error Handling
+## Error Handling
 
 The API uses structured error responses:
 
@@ -353,7 +378,7 @@ The API uses structured error responses:
 - `RATE_LIMIT_EXCEEDED` - Too many requests
 - `INTERNAL_ERROR` - Server error
 
-## 📈 Monitoring
+## Monitoring
 
 ### Health Checks
 
@@ -388,7 +413,7 @@ Log categories:
 - `external` - External service calls
 - `performance` - Performance metrics
 
-## 🚀 Deployment
+## Deployment
 
 ### Docker (Recommended)
 
@@ -416,7 +441,7 @@ CMD ["node", "dist/server.js"]
 3. Test health endpoint after deployment
 4. Configure n8n workflows with new API URL
 
-## 🔧 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
@@ -442,7 +467,7 @@ Enable debug logging:
 DEBUG=peaknorth:* npm run dev
 ```
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch
@@ -450,10 +475,6 @@ DEBUG=peaknorth:* npm run dev
 4. Add tests for new functionality
 5. Submit a pull request
 
-## 📄 License
-
-MIT License - see LICENSE file for details.
-
 ---
 
-**Built with ❤️ for automated blog content creation**
+**Built with true heart**
