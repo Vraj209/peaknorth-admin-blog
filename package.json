@@ -38,7 +38,6 @@
     "joi": "^17.11.0",
     "jsonwebtoken": "^9.0.2",
     "luxon": "^3.4.4",
-    "nanoid": "^5.0.4",
     "nodemailer": "^6.9.7",
     "winston": "^3.11.0",
     "zod": "^3.22.4"

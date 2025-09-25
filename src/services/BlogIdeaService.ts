@@ -1,7 +1,7 @@
 import { db } from '../config/database';
 import { BlogIdea, CreateIdeaRequest, UpdateIdeaRequest, IdeaStats, Priority } from '../types/blog';
 import { NotFoundError, ValidationError } from '../middleware/errorHandler';
-import { nanoid } from 'nanoid';
+import { randomUUID } from 'crypto';
 import logger from '../utils/logger';
 import cache from '../utils/cache';
 
@@ -15,7 +15,7 @@ export class BlogIdeaService {
   static async createIdea(ideaData: CreateIdeaRequest): Promise<BlogIdea> {
     try {
       const idea: BlogIdea = {
-        id: nanoid(),
+        id: randomUUID(),
         topic: ideaData.topic.trim(),
         persona: ideaData.persona.trim(),
         goal: ideaData.goal.trim(),

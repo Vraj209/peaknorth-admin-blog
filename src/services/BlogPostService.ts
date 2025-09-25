@@ -10,7 +10,7 @@ import {
   PublishingStats
 } from '../types/blog';
 import { NotFoundError, ValidationError } from '../middleware/errorHandler';
-import { nanoid } from 'nanoid';
+import { randomUUID } from 'crypto';
 import logger from '../utils/logger';
 import cache from '../utils/cache';
 
@@ -24,7 +24,7 @@ export class BlogPostService {
   static async createPost(postData: CreatePostRequest): Promise<BlogPost> {
     try {
       const post: BlogPost = {
-        id: nanoid(),
+        id: randomUUID(),
         status: 'BRIEF',
         scheduledAt: postData.scheduledAt || null,
         publishedAt: null,
