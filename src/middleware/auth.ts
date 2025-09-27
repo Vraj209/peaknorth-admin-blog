@@ -16,7 +16,7 @@ declare global {
 // API Key authentication middleware for n8n requests
 export const authenticateApiKey = (
   req: Request,
-  _res: Response,
+  res: Response,
   next: NextFunction
 ): void => {
   try {
@@ -59,7 +59,7 @@ export const authenticateApiKey = (
 // Optional API key authentication (for mixed endpoints)
 export const optionalApiKey = (
   req: Request,
-  _res: Response,
+  res: Response,
   next: NextFunction
 ): void => {
   const apiKey = req.header('x-api-key');
@@ -87,7 +87,7 @@ export const optionalApiKey = (
 // Rate limiting for unauthenticated requests
 export const requireAuthForHighFrequency = (
   req: Request,
-  _res: Response,
+  res: Response,
   next: NextFunction
 ): void => {
   // Allow n8n requests to bypass rate limiting
@@ -111,7 +111,7 @@ export const requireAuthForHighFrequency = (
 // Middleware to check if request is from n8n
 export const requireN8nAuth = (
   req: Request,
-  _res: Response,
+  res: Response,
   next: NextFunction
 ): void => {
   if (!req.isN8nRequest) {
@@ -130,7 +130,7 @@ export const handleCorsOptions = (
   req: Request,
   res: Response,
   next: NextFunction
-): Response | void => {
+): void => {
   if (req.method === 'OPTIONS') {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -143,7 +143,7 @@ export const handleCorsOptions = (
 
 // Security headers middleware
 export const securityHeaders = (
-  _req: Request,
+  req: Request,
   res: Response,
   next: NextFunction
 ): void => {
