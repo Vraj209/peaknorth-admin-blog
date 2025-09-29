@@ -139,15 +139,15 @@ router.get('/schedule',
     
     // Filter and sort by scheduled time
     const scheduledPosts = approvedPosts
-      .filter(post => post.scheduledAt && post.scheduledAt > Date.now())
-      .sort((a, b) => (a.scheduledAt || 0) - (b.scheduledAt || 0))
+      .filter(post => post.scheduledAt && post.scheduledAt?.getTime?.() > Date.now())
+      .sort((a, b) => (a.scheduledAt?.getTime?.() || 0) - (b.scheduledAt?.getTime?.() || 0))
       .slice(0, limit)
       .map(post => ({
         id: post.id,
         title: post.outline?.title || post.brief?.topic || 'Untitled',
-        scheduledAt: post.scheduledAt,
+        scheduledAt: post.scheduledAt?.getTime?.() ?? 0,
         status: post.status,
-        wordCount: post.wordCount,
+        wordCount: post.draft?.wordCount,
         category: post.category,
         tags: post.tags,
       }));

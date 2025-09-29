@@ -22,7 +22,7 @@ export class BlogIdeaService {
         targetAudience: ideaData.targetAudience?.trim() || '',
         priority: ideaData.priority,
         used: false,
-        createdAt: Date.now(),
+        createdAt: new Date(Date.now()),
         tags: ideaData.tags?.map(tag => tag.trim().toLowerCase()) || [],
         ...(ideaData.difficulty && { difficulty: ideaData.difficulty }),
         ...(ideaData.notes?.trim() && { notes: ideaData.notes.trim() }),
@@ -119,7 +119,7 @@ export class BlogIdeaService {
       unusedIdeas.sort((a, b) => {
         const priorityDiff = priorityOrder[b.priority] - priorityOrder[a.priority];
         if (priorityDiff !== 0) return priorityDiff;
-        return a.createdAt - b.createdAt; // Older first
+        return a.createdAt?.getTime?.() - b.createdAt?.getTime?.(); // Older first
       });
 
       const selectedIdea = unusedIdeas[0];

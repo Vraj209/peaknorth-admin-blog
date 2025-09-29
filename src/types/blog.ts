@@ -26,6 +26,7 @@ export interface PostOutline {
   sections: {
     heading: string;
     subPoints: string[];
+    keywords: string[];
   }[];
   conclusion: string;
   callToAction?: string;
@@ -50,18 +51,24 @@ export interface BlogImage {
   height?: number;
 }
 
+export interface PostDraft {
+  mdx: string;
+  wordCount: number;
+  estimatedReadTime: number;
+}
+
 export interface BlogPost {
   id: string;
   status: PostStatus;
-  scheduledAt: number | null; // epoch ms in America/Toronto timezone intent
-  publishedAt: number | null;
-  createdAt: number;
-  updatedAt: number;
+  scheduledAt: Date | null; // epoch ms in America/Toronto timezone intent
+  publishedAt: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
   
   // Content stages
   brief: PostBrief | null;
   outline: PostOutline | null;
-  draft_mdx: string | null;
+  draft: PostDraft | null;
   seo: PostSEO | null;
   
   // Images
@@ -69,8 +76,6 @@ export interface BlogPost {
   images?: BlogImage[];
   
   // Metadata
-  wordCount?: number;
-  estimatedReadTime?: number;
   tags?: string[];
   category?: string;
   
@@ -90,7 +95,7 @@ export interface BlogIdea {
   priority: Priority;
   difficulty?: Difficulty;
   used: boolean;
-  createdAt: number;
+  createdAt: Date;
   tags?: string[];
   notes?: string;
 }
@@ -107,31 +112,34 @@ export interface CadenceConfig {
 export interface CreatePostRequest {
   brief?: PostBrief;
   outline?: PostOutline;
-  draft_mdx?: string;
-  scheduledAt?: number;
+  draft?: PostDraft;
+  scheduledAt?: Date;
   tags?: string[];
   category?: string;
+  seo?: PostSEO;
+  featuredImage?: BlogImage;
+  images?: BlogImage[];
+  publicUrl?: string;
+  errorMessage?: string;
 }
 
 export interface UpdatePostRequest {
   brief?: PostBrief;
   outline?: PostOutline;
-  draft_mdx?: string;
+  draft?: PostDraft;
   seo?: PostSEO;
   featuredImage?: BlogImage;
   images?: BlogImage[];
-  scheduledAt?: number;
+  scheduledAt?: Date;
   tags?: string[];
   category?: string;
-  wordCount?: number;
-  estimatedReadTime?: number;
   publicUrl?: string;
   errorMessage?: string;
 }
 
 export interface UpdatePostStatusRequest {
   status: PostStatus;
-  scheduledAt?: number;
+  scheduledAt?: Date;
   errorMessage?: string;
 }
 

@@ -28,25 +28,35 @@ export class BlogPostService {
         status: 'BRIEF',
         scheduledAt: postData.scheduledAt || null,
         publishedAt: null,
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
+        createdAt: new Date(Date.now()),
+        updatedAt: new Date(Date.now()),
         brief: postData.brief || null,
         outline: postData.outline || null,
-        draft_mdx: postData.draft_mdx || null,
-        seo: null,
+        draft: postData.draft || null,
+        seo: postData.seo || null,
+        ...(postData.featuredImage && { featuredImage: postData.featuredImage }),
+        ...(postData.images && { images: postData.images }),
+        ...(postData.publicUrl && { publicUrl: postData.publicUrl }),
+        ...(postData.errorMessage && { errorMessage: postData.errorMessage }),
         ...(postData.tags && { tags: postData.tags }),
         ...(postData.category && { category: postData.category }),
       };
       console.log("postDATA from create post",postData)
       await db.collection(this.COLLECTION).doc(post.id).set(post);
       
-      // Invalidate cache
+      // Invalidate cache - delete all posts from cache
       cache.delByTag('posts');
       
       logger.info('Blog post created', { 
         postId: post.id, 
         status: post.status,
-        topic: post.brief?.topic 
+        topic: post.brief?.topic ,
+        tags: post.tags,
+        category: post.category,
+        featuredImage: post.featuredImage,
+        images: post.images,
+        publicUrl: post.publicUrl,
+        errorMessage: post.errorMessage,
       });
       
       return post;
@@ -113,7 +123,7 @@ export class BlogPostService {
         posts = posts.filter(post => 
           post.brief?.topic?.toLowerCase().includes(searchLower) ||
           post.outline?.title?.toLowerCase().includes(searchLower) ||
-          post.draft_mdx?.toLowerCase().includes(searchLower)
+          post.draft?.mdx?.toLowerCase().includes(searchLower)
         );
       }
 
@@ -181,7 +191,7 @@ export class BlogPostService {
       if (updates.outline && currentPost.status === 'BRIEF') {
         await postRef.update({ status: 'OUTLINE' });
         logger.info('Auto-updated post status to OUTLINE', { postId });
-      } else if (updates.draft_mdx && currentPost.status === 'OUTLINE') {
+      } else if (updates.draft?.mdx && currentPost.status === 'OUTLINE') {
         await postRef.update({ status: 'DRAFT' });
         logger.info('Auto-updated post status to DRAFT', { postId });
       }
@@ -271,7 +281,7 @@ export class BlogPostService {
       const now = Date.now();
       
       const readyPosts = approvedPosts.filter(post => 
-        post.scheduledAt && post.scheduledAt <= now
+        post.scheduledAt && post.scheduledAt?.getTime?.() <= now
       );
 
       // Cache for shorter time since this is time-sensitive
@@ -298,7 +308,7 @@ export class BlogPostService {
 
       return await this.updatePostStatus(postId, { 
         status: 'PUBLISHED',
-        scheduledAt: Date.now() 
+        scheduledAt: new Date(Date.now()) 
       });
     } catch (error) {
       logger.error('Failed to publish post:', error);
@@ -360,26 +370,26 @@ export class BlogPostService {
       const approvedPosts = await this.getPostsByStatus('APPROVED');
 
       const postsThisWeek = publishedPosts.filter(p => 
-        p.publishedAt && p.publishedAt >= oneWeekAgo
+        p.publishedAt && p.publishedAt?.getTime?.() >= oneWeekAgo
       ).length;
 
       const postsThisMonth = publishedPosts.filter(p => 
-        p.publishedAt && p.publishedAt >= oneMonthAgo
+        p.publishedAt && p.publishedAt?.getTime?.() >= oneMonthAgo
       ).length;
 
       // Find next scheduled post
       const nextScheduled = approvedPosts
-        .filter(p => p.scheduledAt && p.scheduledAt > now)
-        .sort((a, b) => (a.scheduledAt || 0) - (b.scheduledAt || 0))[0];
+        .filter(p => p.scheduledAt && p.scheduledAt?.getTime?.() > now)
+        .sort((a, b) => (a.scheduledAt?.getTime?.() || 0) - (b.scheduledAt?.getTime?.() || 0))[0];
 
       // Get recently published posts
       const recentlyPublished = publishedPosts
-        .sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0))
+        .sort((a, b) => (b.publishedAt?.getTime?.() || 0) - (a.publishedAt?.getTime?.() || 0))
         .slice(0, 5)
         .map(p => ({
           id: p.id,
           publishedAt: p.publishedAt!,
-          ...(p.outline?.title && { title: p.outline.title }),
+          ...(p.outline?.title && { title: p.outline?.title }),
           ...(p.publicUrl && { publicUrl: p.publicUrl }),
         }));
 
@@ -391,10 +401,15 @@ export class BlogPostService {
           nextScheduledPost: {
             id: nextScheduled.id,
             ...(nextScheduled.outline?.title && { title: nextScheduled.outline.title }),
-            scheduledAt: nextScheduled.scheduledAt!,
+            scheduledAt: nextScheduled.scheduledAt?.getTime?.() ?? 0,
           }
         }),
-        recentlyPublished,
+        recentlyPublished: recentlyPublished.map(p => ({
+          id: p.id,
+          publishedAt: p.publishedAt?.getTime?.() ?? 0,
+          ...(p.title && { title: p.title }),
+          ...(p.publicUrl && { publicUrl: p.publicUrl }),
+        })),
       };
 
       cache.set(cacheKey, stats, { ttl: this.CACHE_TTL, tags: ['posts'] });
