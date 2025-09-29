@@ -126,22 +126,33 @@ const postSEOSchema = z.object({
   schema: z.record(z.any()).optional(),
 });
 
+const postDraftSchema = z.object({
+  mdx: z.string().min(100, 'Draft content must be at least 100 characters').max(50000, 'Draft content must not exceed 50,000 characters'),
+  wordCount: z.number().int().min(1, 'Word count must be positive'),
+  estimatedReadTime: z.number().int().min(1, 'Estimated read time must be positive'),
+});
+
 export const createPostSchema = z.object({
   status: z.nativeEnum(PostStatus).default(PostStatus.BRIEF),
   brief: postBriefSchema.optional(),
+  outline: postOutlineSchema.optional(),
+  draft: postDraftSchema.optional(),
+  seo: postSEOSchema.optional(),
   scheduledAt: timestampSchema.optional(),
   tags: z.array(z.string().trim().min(1)).max(10).default([]),
   category: z.string().max(50).trim().optional(),
   authorId: z.string().optional(),
   featuredImage: blogImageSchema.optional(),
   images: z.array(blogImageSchema).max(20, 'Maximum 20 images allowed').default([]),
+  publicUrl: z.string().url().optional(),
+  errorMessage: z.string().optional(),
 });
 
 export const updatePostSchema = z.object({
   status: z.nativeEnum(PostStatus).optional(),
   brief: postBriefSchema.optional(),
   outline: postOutlineSchema.optional(),
-  draft_mdx: z.string().min(500).max(50000).optional(),
+  draft: postDraftSchema.optional(),
   seo: postSEOSchema.optional(),
   scheduledAt: timestampSchema.optional(),
   tags: z.array(z.string().trim().min(1)).max(10).optional(),
@@ -292,10 +303,13 @@ export const commonQuerySchema = z.object({
 export const validateSchema = (schema: z.ZodSchema) => {
   return (req: any, _res: any, next: any) => {
     try {
+      console.log('Validating request body:', JSON.stringify(req.body, null, 2));
       const validatedData = schema.parse(req.body);
+      console.log('Validation successful, validated data:', JSON.stringify(validatedData, null, 2));
       req.body = validatedData;
       next();
     } catch (error) {
+      console.log('Validation failed:', error);
       next(error);
     }
   };
