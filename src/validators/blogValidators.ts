@@ -116,14 +116,14 @@ const postSEOSchema = z.object({
   focusKeyword: z.string().min(2).max(50).trim(),
   keywords: z.array(z.string().trim().min(1)).min(1).max(20),
   slug: slugSchema,
-  canonicalUrl: urlSchema.optional(),
-  ogTitle: z.string().max(60).trim().optional(),
-  ogDescription: z.string().max(160).trim().optional(),
-  ogImage: urlSchema.optional(),
-  twitterTitle: z.string().max(70).trim().optional(),
-  twitterDescription: z.string().max(200).trim().optional(),
-  twitterImage: urlSchema.optional(),
-  schema: z.record(z.any()).optional(),
+  // canonicalUrl: urlSchema.optional(),
+  // ogTitle: z.string().max(60).trim().optional(),
+  // ogDescription: z.string().max(160).trim().optional(),
+  // ogImage: urlSchema.optional(),
+  // twitterTitle: z.string().max(70).trim().optional(),
+  // twitterDescription: z.string().max(200).trim().optional(),
+  // twitterImage: urlSchema.optional(),
+  // schema: z.record(z.any()).optional(),
 });
 
 const postDraftSchema = z.object({
