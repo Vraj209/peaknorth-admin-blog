@@ -15,21 +15,20 @@ const router = Router();
 router.get('/ready',
   authenticateApiKey,
   asyncHandler(async (_req, res) => {
-    const posts = await BlogPostService.getReadyToPublishPosts();
-    
+    const approvedPosts = await BlogPostService.getReadyToPublishPosts();
+    console.log("Posts Approved to seo:", approvedPosts);
     const response: ApiResponse = {
       success: true,
-      data: posts,
-      message: posts.length > 0 
-        ? `Found ${posts.length} post(s) ready to publish`
+      data: approvedPosts,
+      message: approvedPosts.length > 0 ? `Found ${approvedPosts.length} post(s) ready to publish`
         : 'No posts ready to publish',
       timestamp: Date.now(),
     };
     
     logger.info('Ready to publish posts retrieved via n8n API', { 
-      post: posts,
-      count: posts.length,
-      postIds: posts.map(p => p.id)
+      post: approvedPosts,
+      count: approvedPosts.length,
+      postIds: approvedPosts.map(p => p.id)
     });
     
     res.json(response);

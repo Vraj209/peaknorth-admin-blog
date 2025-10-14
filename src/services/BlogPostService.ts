@@ -277,17 +277,16 @@ export class BlogPostService {
       // if (cached) return cached;
 
       const approvedPosts = await this.getPostsByStatus('APPROVED');
-      const now = Date.now();
-      console.log("Approved posts:", approvedPosts);
-      const readyPosts = approvedPosts.filter(post => 
-        post.scheduledAt && post.scheduledAt?.getTime?.() <= now
-      );
+      // const now = Date.now();
+      // const readyPosts = approvedPosts.filter(post => 
+      //   post.scheduledAt && post.scheduledAt?.getTime?.() <= now
+      // );
 
       // Cache for shorter time since this is time-sensitive
       // cache.set(cacheKey, readyPosts, { ttl: 60, tags: ['posts'] }); // 1 minute
       
-      logger.info(`Found ${readyPosts.length} posts ready to publish`);
-      return readyPosts;
+      logger.info(`Found ${approvedPosts.length} posts ready to publish`);
+      return approvedPosts;
     } catch (error) {
       logger.error('Failed to get ready to publish posts:', error);
       throw error;
