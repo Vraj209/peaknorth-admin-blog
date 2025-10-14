@@ -27,6 +27,7 @@ router.get('/ready',
     };
     
     logger.info('Ready to publish posts retrieved via n8n API', { 
+      post: posts,
       count: posts.length,
       postIds: posts.map(p => p.id)
     });

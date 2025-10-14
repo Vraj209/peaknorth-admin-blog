@@ -272,19 +272,19 @@ export class BlogPostService {
    */
   static async getReadyToPublishPosts(): Promise<BlogPost[]> {
     try {
-      const cacheKey = 'posts:ready-to-publish';
-      const cached = cache.get<BlogPost[]>(cacheKey);
-      if (cached) return cached;
+      // const cacheKey = 'posts:ready-to-publish';
+      // const cached = cache.get<BlogPost[]>(cacheKey);
+      // if (cached) return cached;
 
       const approvedPosts = await this.getPostsByStatus('APPROVED');
       const now = Date.now();
-      
+      console.log("Approved posts:", approvedPosts);
       const readyPosts = approvedPosts.filter(post => 
         post.scheduledAt && post.scheduledAt?.getTime?.() <= now
       );
 
       // Cache for shorter time since this is time-sensitive
-      cache.set(cacheKey, readyPosts, { ttl: 60, tags: ['posts'] }); // 1 minute
+      // cache.set(cacheKey, readyPosts, { ttl: 60, tags: ['posts'] }); // 1 minute
       
       logger.info(`Found ${readyPosts.length} posts ready to publish`);
       return readyPosts;
