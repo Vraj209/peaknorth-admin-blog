@@ -78,10 +78,11 @@ export interface BlogPost {
   // Metadata
   tags?: string[];
   category?: string;
-  
+
+ 
   // Publishing
   publicUrl?: string;
-  
+  htmlContent: string;
   // Error tracking
   errorMessage?: string;
 }
