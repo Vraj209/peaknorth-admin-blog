@@ -29,7 +29,6 @@ router.post('/',
   validateSchema(createPostSchema),
   asyncHandler(async (req, res) => {
     const post = await BlogPostService.createPost(req.body);
-    console.log("create post", post)
     const response: ApiResponse = {
       success: true,
       data: post,
@@ -162,15 +161,7 @@ router.put('/:id',
   validateParams(idParamSchema),
   validateSchema(updatePostSchema),
   asyncHandler(async (req, res) => {
-    logger.info('PUT /posts/:id - Request received:', { 
-      postId: req.params.id,
-      body: req.body,
-      headers: req.headers,
-      isN8nRequest: req.isN8nRequest 
-    });
-    
     const post = await BlogPostService.updatePost(req.params.id!, req.body);
-    console.log(post)
     const response: ApiResponse = {
       success: true,
       data: post,

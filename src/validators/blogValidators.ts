@@ -303,13 +303,10 @@ export const commonQuerySchema = z.object({
 export const validateSchema = (schema: z.ZodSchema) => {
   return (req: any, _res: any, next: any) => {
     try {
-      console.log('Validating request body:', JSON.stringify(req.body, null, 2));
       const validatedData = schema.parse(req.body);
-      console.log('Validation successful, validated data:', JSON.stringify(validatedData, null, 2));
       req.body = validatedData;
       next();
     } catch (error) {
-      console.log('Validation failed:', error);
       next(error);
     }
   };
@@ -332,7 +329,6 @@ export const validateParams = (schema: z.ZodSchema) => {
     try {
       const validatedParams = schema.parse(req.params);
       req.params = validatedParams;
-      console.log("Params: ",req.params)
       next();
     } catch (error) {
       next(error);

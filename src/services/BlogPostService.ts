@@ -41,7 +41,6 @@ export class BlogPostService {
         ...(postData.tags && { tags: postData.tags }),
         ...(postData.category && { category: postData.category }),
       };
-      console.log("postDATA from create post",postData)
       await db.collection(this.COLLECTION).doc(post.id).set(post);
       
       // Invalidate cache - delete all posts from cache
@@ -171,8 +170,6 @@ export class BlogPostService {
    */
   static async updatePost(postId: string, updates: UpdatePostRequest): Promise<BlogPost> {
     try {
-      logger.info('Updating post with data:', { postId, updates });
-      
       const postRef = db.collection(this.COLLECTION).doc(postId);
       const postDoc = await postRef.get();
       
@@ -185,7 +182,6 @@ export class BlogPostService {
         updatedAt: Date.now(),
       };
 
-      logger.info('Final update data being saved:', updateData);
       await postRef.update(updateData);
 
       // Auto-update status based on content updates

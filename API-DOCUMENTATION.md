@@ -204,7 +204,7 @@ Get all blog posts with filtering and pagination
 - `limit`: number (1-100, default: 20)
 - `sortBy`: createdAt|updatedAt|scheduledAt|publishedAt (default: createdAt)
 - `sortOrder`: asc|desc (default: desc)
-- `status`: BRIEF|OUTLINE|DRAFT|NEEDS_REVIEW|APPROVED|SCHEDULED|PUBLISHED
+- `status`: BRIEF|OUTLINE|DRAFT|S_REVIEW|APPROVED|SCHEDULED|PUBLISHED
 - `category`: string (optional)
 - `authorId`: string (optional)
 - `search`: string (optional)
