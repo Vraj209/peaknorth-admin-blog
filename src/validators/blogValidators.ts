@@ -141,11 +141,13 @@ export const createPostSchema = z.object({
   scheduledAt: timestampSchema.optional(),
   tags: z.array(z.string().trim().min(1)).max(10).default([]),
   category: z.string().max(50).trim().optional(),
+  ideaId: z.string().optional(),
   authorId: z.string().optional(),
   featuredImage: blogImageSchema.optional(),
   images: z.array(blogImageSchema).max(20, 'Maximum 20 images allowed').default([]),
   publicUrl: z.string().url().optional(),
   errorMessage: z.string().optional(),
+  htmlContent: z.string().min(500).optional()
 });
 
 export const updatePostSchema = z.object({
@@ -157,9 +159,11 @@ export const updatePostSchema = z.object({
   scheduledAt: timestampSchema.optional(),
   tags: z.array(z.string().trim().min(1)).max(10).optional(),
   category: z.string().max(50).trim().optional(),
+  ideaId: z.string().optional(),
   reviewNotes: z.string().max(1000).trim().optional(),
   featuredImage: blogImageSchema.nullable().optional(),
   images: z.array(blogImageSchema).max(20, 'Maximum 20 images allowed').optional(),
+  htmlContent: z.string().min(500).optional()
 });
 
 export const updatePostStatusSchema = z.object({
