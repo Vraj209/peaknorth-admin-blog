@@ -78,11 +78,12 @@ export interface BlogPost {
   // Metadata
   tags?: string[];
   category?: string;
+  ideaId?: string; // Link to the idea that generated this post
 
  
   // Publishing
   publicUrl?: string;
-  htmlContent: string;
+  htmlContent?: string;
   // Error tracking
   errorMessage?: string;
 }
@@ -117,6 +118,7 @@ export interface CreatePostRequest {
   scheduledAt?: Date;
   tags?: string[];
   category?: string;
+  ideaId?: string;
   seo?: PostSEO;
   featuredImage?: BlogImage;
   images?: BlogImage[];
@@ -134,6 +136,7 @@ export interface UpdatePostRequest {
   scheduledAt?: Date;
   tags?: string[];
   category?: string;
+  ideaId?: string;
   publicUrl?: string;
   errorMessage?: string;
 }

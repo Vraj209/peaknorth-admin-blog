@@ -40,6 +40,7 @@ export class BlogPostService {
         ...(postData.errorMessage && { errorMessage: postData.errorMessage }),
         ...(postData.tags && { tags: postData.tags }),
         ...(postData.category && { category: postData.category }),
+        ...(postData.ideaId && { ideaId: postData.ideaId }),
       };
       await db.collection(this.COLLECTION).doc(post.id).set(post);
       
@@ -243,6 +244,18 @@ export class BlogPostService {
       // Set publishedAt when status becomes PUBLISHED
       if (status === 'PUBLISHED' && post.status !== 'PUBLISHED') {
         updateData.publishedAt = Date.now();
+        
+        // Mark the associated idea as used
+        if (post.ideaId) {
+          try {
+            const { BlogIdeaService } = require('./BlogIdeaService');
+            await BlogIdeaService.markIdeaAsUsed(post.ideaId);
+            logger.info('Marked idea as used', { ideaId: post.ideaId, postId });
+          } catch (error) {
+            logger.error('Failed to mark idea as used', { ideaId: post.ideaId, error });
+            // Don't fail the post update if idea marking fails
+          }
+        }
       }
 
       const updatedPost = await this.updatePost(postId, updateData);
