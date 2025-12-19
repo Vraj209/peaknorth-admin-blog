@@ -234,43 +234,17 @@ export class BlogPostService {
         updatedAt: Date.now(),
       };
 
-      // Auto-set scheduledAt when status becomes SCHEDULED
-      if (status === 'SCHEDULED' && post.status !== 'SCHEDULED') {
-        // Calculate next day 10 AM EST
-        const now = new Date();
-        const estTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
-        
-        // Set to next day at 10 AM EST
-        const scheduledTime = new Date(estTime);
-        scheduledTime.setDate(scheduledTime.getDate() + 1);
-        scheduledTime.setHours(10, 0, 0, 0);
-        
-        updateData.scheduledAt = scheduledTime.getTime();
-        
-        logger.info('Auto-set scheduledAt for SCHEDULED status', {
-          postId,
-          scheduledAt: scheduledTime.toISOString(),
-          scheduledAtEST: scheduledTime.toLocaleString('en-US', { timeZone: 'America/New_York' })
-        });
-      } else if (scheduledAt !== null && scheduledAt !== undefined) {
-        // Allow manual override of scheduledAt if provided
-        updateData.scheduledAt = new Date(scheduledAt).getTime();
+      if (scheduledAt !== null) {
+        updateData.scheduledAt = new Date(scheduledAt!).getTime();
       }
 
       if (errorMessage !== undefined) {
         updateData.errorMessage = errorMessage;
       }
 
-      // Set publishedAt when status becomes PUBLISHED (current time EST)
+      // Set publishedAt when status becomes PUBLISHED
       if (status === 'PUBLISHED' && post.status !== 'PUBLISHED') {
-        const now = new Date();
-        updateData.publishedAt = now.getTime();
-        
-        logger.info('Auto-set publishedAt for PUBLISHED status', {
-          postId,
-          publishedAt: now.toISOString(),
-          publishedAtEST: now.toLocaleString('en-US', { timeZone: 'America/New_York' })
-        });
+        updateData.publishedAt = new Date(Date.now()).getTime();
         
         // Mark the associated idea as used
         if (post.ideaId) {
@@ -312,23 +286,21 @@ export class BlogPostService {
    */
   static async getReadyToPublishPosts(): Promise<BlogPost[]> {
     try {
-      const cacheKey = 'posts:ready-to-publish';
-      const cached = cache.get<BlogPost[]>(cacheKey);
-      if (cached) return cached;
+      // const cacheKey = 'posts:ready-to-publish';
+      // const cached = cache.get<BlogPost[]>(cacheKey);
+      // if (cached) return cached;
 
       const approvedPosts = await this.getPostsByStatus('APPROVED');
-      const now = Date.now();
-      
-      // Filter posts where scheduled time has passed
-      const readyPosts = approvedPosts.filter(post => 
-        post.scheduledAt && post.scheduledAt?.getTime?.() <= now
-      );
+      // const now = Date.now();
+      // const readyPosts = approvedPosts.filter(post => 
+      //   post.scheduledAt && post.scheduledAt?.getTime?.() <= now
+      // );
 
       // Cache for shorter time since this is time-sensitive
-      cache.set(cacheKey, readyPosts, { ttl: 60, tags: ['posts'] }); // 1 minute
+      // cache.set(cacheKey, readyPosts, { ttl: 60, tags: ['posts'] }); // 1 minute
       
-      logger.info(`Found ${readyPosts.length} posts ready to publish (out of ${approvedPosts.length} approved posts)`);
-      return readyPosts;
+      logger.info(`Found ${approvedPosts.length} posts ready to publish`);
+      return approvedPosts;
     } catch (error) {
       logger.error('Failed to get ready to publish posts:', error);
       throw error;
