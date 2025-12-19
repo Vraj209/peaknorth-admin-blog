@@ -135,22 +135,10 @@ router.get('/schedule',
   optionalApiKey,
   asyncHandler(async (req, res) => {
     const limit = parseInt(req.query.limit as string) || 10;
-    const approvedPosts = await BlogPostService.getPostsByStatus('APPROVED');
+    const approvedPosts = await BlogPostService.getPostsByStatus('SCHEDULED');
     
     // Filter and sort by scheduled time
-    const scheduledPosts = approvedPosts
-      .filter(post => post.scheduledAt && post.scheduledAt?.getTime?.() > Date.now())
-      .sort((a, b) => (a.scheduledAt?.getTime?.() || 0) - (b.scheduledAt?.getTime?.() || 0))
-      .slice(0, limit)
-      .map(post => ({
-        id: post.id,
-        title: post.outline?.title || post.brief?.topic || 'Untitled',
-        scheduledAt: post.scheduledAt?.getTime?.() ?? 0,
-        status: post.status,
-        wordCount: post.draft?.wordCount,
-        category: post.category,
-        tags: post.tags,
-      }));
+    const scheduledPosts = approvedPosts.slice(0, limit);
     
     const response: ApiResponse = {
       success: true,
