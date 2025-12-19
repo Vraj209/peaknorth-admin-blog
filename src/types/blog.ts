@@ -4,7 +4,8 @@ export type PostStatus =
   | 'BRIEF' 
   | 'OUTLINE' 
   | 'DRAFT' 
-  | 'NEEDS_REVIEW' 
+  | 'NEEDS_REVIEW'
+  | 'REJECTED' 
   | 'APPROVED' 
   | 'SCHEDULED' 
   | 'PUBLISHED';

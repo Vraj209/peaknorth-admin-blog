@@ -286,21 +286,15 @@ export class BlogPostService {
    */
   static async getReadyToPublishPosts(): Promise<BlogPost[]> {
     try {
-      // const cacheKey = 'posts:ready-to-publish';
-      // const cached = cache.get<BlogPost[]>(cacheKey);
-      // if (cached) return cached;
-
+  
       const approvedPosts = await this.getPostsByStatus('APPROVED');
-      // const now = Date.now();
-      // const readyPosts = approvedPosts.filter(post => 
-      //   post.scheduledAt && post.scheduledAt?.getTime?.() <= now
-      // );
+      const now = Date.now();
+      const readyPosts = approvedPosts.filter(post => 
+        post.scheduledAt && post.scheduledAt?.getTime?.() <= now
+      );
 
-      // Cache for shorter time since this is time-sensitive
-      // cache.set(cacheKey, readyPosts, { ttl: 60, tags: ['posts'] }); // 1 minute
-      
-      logger.info(`Found ${approvedPosts.length} posts ready to publish`);
-      return approvedPosts;
+      logger.info(`Found ${readyPosts.length} posts ready to publish`);
+      return readyPosts;
     } catch (error) {
       logger.error('Failed to get ready to publish posts:', error);
       throw error;
@@ -320,7 +314,7 @@ export class BlogPostService {
 
       return await this.updatePostStatus(postId, { 
         status: 'PUBLISHED',
-        scheduledAt: new Date(Date.now()) 
+        scheduledAt: new Date(Date.now())
       });
     } catch (error) {
       logger.error('Failed to publish post:', error);
