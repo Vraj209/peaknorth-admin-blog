@@ -5,10 +5,10 @@ export type PostStatus =
   | 'OUTLINE' 
   | 'DRAFT' 
   | 'NEEDS_REVIEW'
-  | 'REJECTED' 
   | 'APPROVED' 
   | 'SCHEDULED' 
-  | 'PUBLISHED';
+  | 'PUBLISHED'
+  | 'REGENRATE';
 
 export type Priority = 'low' | 'medium' | 'high';
 export type Difficulty = 'beginner' | 'intermediate' | 'advanced';
@@ -128,6 +128,7 @@ export interface CreatePostRequest {
 }
 
 export interface UpdatePostRequest {
+  status?: PostStatus;
   brief?: PostBrief;
   outline?: PostOutline;
   draft?: PostDraft;
@@ -256,7 +257,7 @@ export interface ContentGenerationResponse {
 
 // Webhook types (for n8n workflows)
 export interface WebhookPayload {
-  event: 'post.created' | 'post.approved' | 'post.published' | 'idea.created';
+  event: 'post.created' | 'post.approved' | 'post.published' | 'post.regenerate' | 'idea.created';
   data: BlogPost | BlogIdea;
   timestamp: number;
 }

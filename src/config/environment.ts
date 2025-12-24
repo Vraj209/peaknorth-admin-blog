@@ -26,6 +26,7 @@ const securityConfigSchema = z.object({
   jwtExpiresIn: z.string().default('7d'),
   jwtRefreshExpiresIn: z.string().default('30d'),
   n8nApiKey: z.string().min(16, 'N8N API key must be at least 16 characters'),
+  n8nRegenerateWebhookUrl: z.string().url().optional(), // N8N webhook URL for post regeneration
   rateLimitWindowMs: z.coerce.number().default(900000), // 15 minutes
   rateLimitMaxRequests: z.coerce.number().default(100),
 });
@@ -101,6 +102,7 @@ const securityConfig = securityConfigSchema.parse({
   jwtExpiresIn: process.env.JWT_EXPIRES_IN,
   jwtRefreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN,
   n8nApiKey: process.env.N8N_API_KEY,
+  n8nRegenerateWebhookUrl: process.env.N8N_REGENERATE_WEBHOOK_URL,
   rateLimitWindowMs: process.env.RATE_LIMIT_WINDOW_MS,
   rateLimitMaxRequests: process.env.RATE_LIMIT_MAX_REQUESTS,
 });

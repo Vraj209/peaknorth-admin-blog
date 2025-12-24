@@ -8,7 +8,8 @@ export enum PostStatus {
   NEEDS_REVIEW = 'NEEDS_REVIEW',
   APPROVED = 'APPROVED',
   SCHEDULED = 'SCHEDULED',
-  PUBLISHED = 'PUBLISHED'
+  PUBLISHED = 'PUBLISHED',
+  REGENRATE = 'REGENRATE'
 }
 
 export enum Priority {

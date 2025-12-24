@@ -13,6 +13,7 @@ import { NotFoundError, ValidationError } from '../middleware/errorHandler';
 import { randomUUID } from 'crypto';
 import logger from '../utils/logger';
 import cache from '../utils/cache';
+import { triggerRegenerateWebhook } from '../utils/n8nWebhook';
 
 export class BlogPostService {
   private static readonly COLLECTION = 'posts';
@@ -205,6 +206,16 @@ export class BlogPostService {
       cache.delByTag('posts');
       cache.del(`post:${postId}`);
       
+      // Trigger N8N webhook when status is set to REGENRATE
+      if (updates.status === 'REGENRATE') {
+        triggerRegenerateWebhook(updatedPost).catch((error) => {
+          logger.error('Failed to trigger regenerate webhook from updatePost', { 
+            postId, 
+            error: error instanceof Error ? error.message : 'Unknown error' 
+          });
+        });
+      }
+      
       logger.info('Post updated', { postId, updates: Object.keys(updateData) });
       return updatedPost;
     } catch (error) {
@@ -260,6 +271,7 @@ export class BlogPostService {
       }
 
       const updatedPost = await this.updatePost(postId, updateData);
+      // Note: N8N webhook for REGENRATE is triggered in updatePost() method
       
       logger.info('Post status updated', { 
         postId, 
@@ -348,6 +360,7 @@ export class BlogPostService {
           APPROVED: allPosts.filter(p => p.status === 'APPROVED').length,
           SCHEDULED: allPosts.filter(p => p.status === 'SCHEDULED').length,
           PUBLISHED: allPosts.filter(p => p.status === 'PUBLISHED').length,
+          REGENRATE: allPosts.filter(p => p.status === 'REGENRATE').length,
         },
       };
 
@@ -455,13 +468,14 @@ export class BlogPostService {
    */
   private static validateStatusTransition(currentStatus: PostStatus, newStatus: PostStatus): void {
     const validTransitions: Record<PostStatus, PostStatus[]> = {
-      BRIEF: ['OUTLINE', 'DRAFT'],
-      OUTLINE: ['DRAFT', 'BRIEF'],
-      DRAFT: ['NEEDS_REVIEW', 'OUTLINE'],
-      NEEDS_REVIEW: ['APPROVED', 'DRAFT'],
-      APPROVED: ['SCHEDULED', 'PUBLISHED', 'DRAFT'],
-      SCHEDULED: ['PUBLISHED', 'APPROVED'],
+      BRIEF: ['OUTLINE', 'DRAFT', 'REGENRATE'],
+      OUTLINE: ['DRAFT', 'BRIEF', 'REGENRATE'],
+      DRAFT: ['NEEDS_REVIEW', 'OUTLINE', 'REGENRATE'],
+      NEEDS_REVIEW: ['APPROVED', 'DRAFT', 'REGENRATE'],
+      APPROVED: ['SCHEDULED', 'PUBLISHED', 'DRAFT', 'REGENRATE'],
+      SCHEDULED: ['PUBLISHED', 'APPROVED', 'REGENRATE'],
       PUBLISHED: [], // Published posts cannot change status
+      REGENRATE: ['BRIEF', 'OUTLINE', 'DRAFT', 'NEEDS_REVIEW'], // Regenerated posts can go back to earlier stages
     };
 
     const allowedTransitions = validTransitions[currentStatus];
