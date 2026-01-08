@@ -179,6 +179,13 @@ export class BlogPostService {
         throw new NotFoundError(`Post with ID '${postId}' not found`);
       }
 
+      const currentPost = { ...postDoc.data(), id: postDoc.id } as BlogPost;
+
+      // Validate status transition if status is being updated
+      if (updates.status && updates.status !== currentPost.status) {
+        this.validateStatusTransition(currentPost.status, updates.status);
+      }
+
       const updateData: any = {
         ...updates,
         updatedAt: Date.now(),
@@ -187,8 +194,6 @@ export class BlogPostService {
       await postRef.update(updateData);
 
       // Auto-update status based on content updates
-      const currentPost = { ...postDoc.data(), id: postDoc.id } as BlogPost;
-      
       if (updates.outline && currentPost.status === 'BRIEF') {
         await postRef.update({ status: 'OUTLINE' });
         logger.info('Auto-updated post status to OUTLINE', { postId });
@@ -360,6 +365,7 @@ export class BlogPostService {
           APPROVED: allPosts.filter(p => p.status === 'APPROVED').length,
           SCHEDULED: allPosts.filter(p => p.status === 'SCHEDULED').length,
           PUBLISHED: allPosts.filter(p => p.status === 'PUBLISHED').length,
+          UNPUBLISHED: allPosts.filter(p => p.status === 'UNPUBLISHED').length,
           REGENRATE: allPosts.filter(p => p.status === 'REGENRATE').length,
         },
       };
@@ -474,7 +480,8 @@ export class BlogPostService {
       NEEDS_REVIEW: ['APPROVED', 'DRAFT', 'REGENRATE'],
       APPROVED: ['SCHEDULED', 'PUBLISHED', 'DRAFT', 'REGENRATE'],
       SCHEDULED: ['PUBLISHED', 'APPROVED', 'REGENRATE'],
-      PUBLISHED: [], // Published posts cannot change status
+      PUBLISHED: ['UNPUBLISHED'], // Published posts can only be unpublished
+      UNPUBLISHED: ['PUBLISHED', 'DRAFT', 'REGENRATE'], // Unpublished posts can be republished or edited
       REGENRATE: ['BRIEF', 'OUTLINE', 'DRAFT', 'NEEDS_REVIEW'], // Regenerated posts can go back to earlier stages
     };
 
