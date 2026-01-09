@@ -49,6 +49,9 @@ if (featureFlagsConfig.enableCors) {
     origin: [
       urlsConfig.frontend,
       urlsConfig.adminDashboard,
+      urlsConfig.publicBlog,
+      'https://peaknorth-admin-blog.vercel.app',
+      'https://peaknorth-admin-blog-frontend.vercel.app',
       'http://localhost:3001',
       'http://localhost:5173',
       'http://localhost:5174',

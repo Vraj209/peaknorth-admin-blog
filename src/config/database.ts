@@ -35,7 +35,7 @@ class FirebaseManager {
             if (firebase.databaseURL) config.databaseURL = firebase.databaseURL;
             if (firebase.storageBucket) config.storageBucket = firebase.storageBucket;
             admin.initializeApp(config);
-            logger.info('✅ Firebase initialized with service account key');
+            logger.info('Firebase initialized with service account key');
           } catch (error) {
             logger.error('❌ Failed to parse Firebase service account key:', error);
             if (!isDevelopment) {
@@ -56,11 +56,11 @@ class FirebaseManager {
           if (firebase.databaseURL) config.databaseURL = firebase.databaseURL;
           if (firebase.storageBucket) config.storageBucket = firebase.storageBucket;
           admin.initializeApp(config);
-          logger.info('✅ Firebase initialized with default credentials');
+          logger.info('Firebase initialized with default credentials');
         }
 
         this.initialized = true;
-        logger.info('✅ Firebase Admin SDK initialized successfully');
+        logger.info('Firebase Admin SDK initialized successfully');
       }
     } catch (error) {
       logger.error('❌ Failed to initialize Firebase Admin SDK:', error);
@@ -116,7 +116,7 @@ class DatabaseManager {
     // Initialize Firebase
     this.firebaseManager.initialize();
     
-    logger.info('✅ Database initialization completed');
+    logger.info('Database initialization completed');
   }
 
   public getFirestore() {
@@ -135,7 +135,7 @@ class DatabaseManager {
     logger.info('🔄 Closing database connections...');
     
     // Firebase Admin SDK doesn't need explicit disconnection
-    logger.info('✅ Database connections closed');
+    logger.info('Database connections closed');
   }
 
   public async healthCheck(): Promise<{ firebase: boolean; cache: boolean }> {
