@@ -66,7 +66,9 @@ export interface BlogPost {
   publishedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
-  
+
+  // Idea
+  ideaId: string;
   // Content stages
   brief: PostBrief | null;
   outline: PostOutline | null;
@@ -80,7 +82,6 @@ export interface BlogPost {
   // Metadata
   tags?: string[];
   category?: string;
-  ideaId?: string; // Link to the idea that generated this post
 
   // Publishing
   publicUrl?: string;

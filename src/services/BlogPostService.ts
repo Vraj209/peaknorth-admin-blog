@@ -37,13 +37,14 @@ export class BlogPostService {
         outline: postData.outline || null,
         draft: postData.draft || null,
         seo: postData.seo || null,
+        ideaId: postData.ideaId || '',
         ...(postData.featuredImage && { featuredImage: postData.featuredImage }),
         ...(postData.images && { images: postData.images }),
         ...(postData.publicUrl && { publicUrl: postData.publicUrl }),
         ...(postData.errorMessage && { errorMessage: postData.errorMessage }),
         ...(postData.tags && { tags: postData.tags }),
         ...(postData.category && { category: postData.category }),
-        ...(postData.ideaId && { ideaId: postData.ideaId }),
+          
       };
       await db.collection(this.COLLECTION).doc(post.id).set(post);
       
@@ -52,6 +53,7 @@ export class BlogPostService {
       
       logger.info('Blog post created', { 
         postId: post.id, 
+        ideaId: post.ideaId,
         status: post.status,
         topic: post.brief?.topic ,
         tags: post.tags,
