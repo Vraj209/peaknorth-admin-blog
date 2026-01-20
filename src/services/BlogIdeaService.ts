@@ -107,7 +107,10 @@ export class BlogIdeaService {
    * Get unused ideas sorted by priority
    */
   static async getUnusedIdeas(): Promise<BlogIdea[]> {
-    return await this.getAllIdeas({ status: "UNUSED" });
+    logger.info("Getting unused ideas");
+    const ideas = await this.getAllIdeas({ status: "UNUSED" });
+    logger.info(`Found ${ideas.length} unused ideas`);
+    return ideas;
   }
 
   /**
@@ -116,7 +119,7 @@ export class BlogIdeaService {
   static async pickNextIdea(): Promise<BlogIdea | null> {
     try {
       const unusedIdeas = await this.getUnusedIdeas();
-
+      logger.info(`Found ${unusedIdeas.length} unused ideas`);
       if (unusedIdeas.length === 0) {
         logger.warn("No unused ideas available for picking");
         return null;
