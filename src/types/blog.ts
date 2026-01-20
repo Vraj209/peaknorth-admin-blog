@@ -18,7 +18,7 @@ export interface PostBrief {
   topic: string;
   persona: string;
   goal: string;
-  targetAudience?: string;
+  targetAudience?: string[];
   keyPoints?: string[];
 }
 
