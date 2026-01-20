@@ -139,6 +139,25 @@ export class BlogIdeaService {
         return null;
       }
 
+      // Verify the idea is still unused before updating (race condition protection)
+      const ideaRef = db.collection(this.COLLECTION).doc(selectedIdea.id);
+      const ideaDoc = await ideaRef.get();
+      
+      if (!ideaDoc.exists) {
+        logger.warn("Selected idea no longer exists", { ideaId: selectedIdea.id });
+        return null;
+      }
+
+      const currentIdea = ideaDoc.data() as BlogIdea;
+      if (currentIdea.status !== "UNUSED") {
+        logger.warn("Selected idea is no longer unused", { 
+          ideaId: selectedIdea.id, 
+          currentStatus: currentIdea.status 
+        });
+        return null;
+      }
+
+      // Update status only if it's currently UNUSED
       await this.updateIdeaStatus(selectedIdea.id, "PROCESSING");
 
       logger.info("Idea picked for content creation", {
