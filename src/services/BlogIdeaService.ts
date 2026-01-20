@@ -163,25 +163,14 @@ export class BlogIdeaService {
       const ideaDoc = await ideaRef.get();
       if (!ideaDoc.exists) throw new NotFoundError("Idea");
       const ideaData = ideaDoc.data() as BlogIdea;
-      if (
-        ideaData.isBriefCreated &&
-        ideaData.isApproved &&
-        ideaData.isPublished
-      ) {
-        try {
-          await ideaRef.update({
-            status: "USED",
-          });
-          logger.info("Idea marked as used", { ideaId });
-          cache.delByTag("ideas");
-        } catch (error) {
-          logger.error("Failed to mark idea as used:", error);
-          throw error;
-        }
-      } else throw new ValidationError("Idea is not used");
+      if (ideaData.status === "USED") throw new ValidationError("Idea is already used");
+      if (ideaData.status === "PROCESSING") throw new ValidationError("Idea is already processing");
+      await ideaRef.update({ status: "USED" });
+      logger.info("Idea marked as used", { ideaId });
+      cache.delByTag("ideas");
     } catch (error) {
       logger.error("Failed to mark idea as used:", error);
-      throw new NotFoundError("Idea");
+      throw error;
     }
   }
 
