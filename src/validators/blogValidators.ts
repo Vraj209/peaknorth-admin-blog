@@ -9,8 +9,13 @@ export enum PostStatus {
   APPROVED = 'APPROVED',
   SCHEDULED = 'SCHEDULED',
   PUBLISHED = 'PUBLISHED',
-  UNPUBLISHED = 'UNPUBLISHED',
   REGENRATE = 'REGENRATE'
+}
+
+export enum IdeaStatus {
+  UNUSED = 'UNUSED',
+  PROCESSING = 'PROCESSING',
+  USED = 'USED'
 }
 
 export enum Priority {
@@ -45,6 +50,7 @@ const blogImageSchema = z.object({
 
 // Blog Idea validation schemas
 export const createBlogIdeaSchema = z.object({
+  status: z.nativeEnum(IdeaStatus).default(IdeaStatus.UNUSED),
   topic: z.string()
     .min(5, 'Topic must be at least 5 characters long')
     .max(200, 'Topic must not exceed 200 characters')
@@ -77,9 +83,9 @@ export const blogIdeaQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(20),
   sortBy: z.enum(['createdAt', 'updatedAt', 'priority', 'topic']).default('createdAt'),
   sortOrder: z.enum(['asc', 'desc']).default('desc'),
-  used: z.coerce.boolean().optional(),
+  status: z.nativeEnum(IdeaStatus).optional(),
   priority: z.nativeEnum(Priority).optional(),
-  category: z.string().optional(),
+  category: z.string().optional(), 
   search: z.string().trim().optional(),
 });
 

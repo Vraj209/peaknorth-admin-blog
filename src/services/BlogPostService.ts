@@ -7,13 +7,15 @@ import {
   UpdatePostStatusRequest,
   PostStats,
   PostFilters,
-  PublishingStats
+  PublishingStats,
+  BlogIdea
 } from '../types/blog';
 import { NotFoundError, ValidationError } from '../middleware/errorHandler';
 import { randomUUID } from 'crypto';
 import logger from '../utils/logger';
 import cache from '../utils/cache';
 import { triggerRegenerateWebhook } from '../utils/n8nWebhook';
+import { BlogIdeaService } from './BlogIdeaService';
 
 export class BlogPostService {
   private static readonly COLLECTION = 'posts';
@@ -166,7 +168,19 @@ export class BlogPostService {
       throw error;
     }
   }
+  
+  // based on post id get the idea
+  static async getIdeaByPostId(postId: string): Promise<BlogIdea> {
+      const postRef = db.collection(this.COLLECTION).doc(postId);
+      const postDoc = await postRef.get();
 
+      const ideaId = postDoc.data()?.ideaId as string;
+      if (!ideaId) {
+        throw new NotFoundError(`Post with ID '${postId}' has no idea ID`);
+      }
+      return await BlogIdeaService.getIdeaById(ideaId);
+  }
+  
   /**
    * Update an existing post
    */
@@ -174,7 +188,8 @@ export class BlogPostService {
     try {
       const postRef = db.collection(this.COLLECTION).doc(postId);
       const postDoc = await postRef.get();
-      
+      const idea = await this.getIdeaByPostId(postId);
+
       if (!postDoc.exists) {
         throw new NotFoundError(`Post with ID '${postId}' not found`);
       }
@@ -196,6 +211,7 @@ export class BlogPostService {
       // Auto-update status based on content updates
       if (updates.outline && currentPost.status === 'BRIEF') {
         await postRef.update({ status: 'OUTLINE' });
+        await BlogIdeaService.updateIdea(idea.id, { isBriefCreated: true });
         logger.info('Auto-updated post status to OUTLINE', { postId });
       } else if (updates.draft?.mdx && currentPost.status === 'OUTLINE') {
         await postRef.update({ status: 'DRAFT' });
@@ -324,11 +340,12 @@ export class BlogPostService {
   static async publishPost(postId: string): Promise<BlogPost> {
     try {
       const post = await this.getPostById(postId);
+      const idea = await this.getIdeaByPostId(postId);
 
       if (post.status !== 'APPROVED' && post.status !== 'SCHEDULED') {
         throw new ValidationError('Only approved or scheduled posts can be published');
       }
-
+      await BlogIdeaService.updateIdea(idea.id, { isPublished: true, status: 'USED' });
       return await this.updatePostStatus(postId, { 
         status: 'PUBLISHED',
         scheduledAt: new Date(Date.now())
@@ -365,7 +382,6 @@ export class BlogPostService {
           APPROVED: allPosts.filter(p => p.status === 'APPROVED').length,
           SCHEDULED: allPosts.filter(p => p.status === 'SCHEDULED').length,
           PUBLISHED: allPosts.filter(p => p.status === 'PUBLISHED').length,
-          UNPUBLISHED: allPosts.filter(p => p.status === 'UNPUBLISHED').length,
           REGENRATE: allPosts.filter(p => p.status === 'REGENRATE').length,
         },
       };

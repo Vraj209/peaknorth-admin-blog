@@ -8,9 +8,9 @@ export type PostStatus =
   | 'APPROVED' 
   | 'SCHEDULED' 
   | 'PUBLISHED'
-  | 'UNPUBLISHED'
   | 'REGENRATE';
 
+export type IdeaStatus = 'UNUSED' | 'PROCESSING' |'USED';
 export type Priority = 'low' | 'medium' | 'high';
 export type Difficulty = 'beginner' | 'intermediate' | 'advanced';
 
@@ -62,7 +62,7 @@ export interface PostDraft {
 export interface BlogPost {
   id: string;
   status: PostStatus;
-  scheduledAt: Date | null; // epoch ms in America/Toronto timezone intent
+  scheduledAt: Date | null;
   publishedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
@@ -82,7 +82,6 @@ export interface BlogPost {
   category?: string;
   ideaId?: string; // Link to the idea that generated this post
 
- 
   // Publishing
   publicUrl?: string;
   htmlContent?: string;
@@ -92,13 +91,13 @@ export interface BlogPost {
 
 export interface BlogIdea {
   id: string;
+  status: IdeaStatus;
   topic: string;
   persona: string;
   goal: string;
   targetAudience?: string;
   priority: Priority;
   difficulty?: Difficulty;
-  used: boolean;
   createdAt: Date;
   tags?: string[];
   notes?: string;
@@ -151,6 +150,7 @@ export interface UpdatePostStatusRequest {
 }
 
 export interface CreateIdeaRequest {
+  status: IdeaStatus;
   topic: string;
   persona: string;
   goal: string;
@@ -170,7 +170,10 @@ export interface UpdateIdeaRequest {
   difficulty?: Difficulty;
   tags?: string[];
   notes?: string;
-  used?: boolean;
+  status?: IdeaStatus;
+  isBriefCreated?: boolean;
+  isApproved?: boolean;
+  isPublished?: boolean;
 }
 
 // Statistics and analytics types
@@ -186,7 +189,7 @@ export interface PostStats {
 
 export interface IdeaStats {
   total: number;
-  used: number;
+  processing: number;
   unused: number;
   byPriority: Record<Priority, number>;
   byDifficulty: Record<Difficulty, number>;
@@ -236,7 +239,7 @@ export interface PostFilters {
 export interface IdeaFilters {
   priority?: Priority | Priority[];
   difficulty?: Difficulty | Difficulty[];
-  used?: boolean;
+  status?: IdeaStatus | IdeaStatus[];
   tags?: string[];
   search?: string; // Search in topic or goal
 }
