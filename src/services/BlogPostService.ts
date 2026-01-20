@@ -324,13 +324,13 @@ export class BlogPostService {
     try {
   
       const approvedPosts = await this.getPostsByStatus('APPROVED');
-      const now = Date.now();
-      const readyPosts = approvedPosts.filter(post => 
-        post.scheduledAt && post.scheduledAt?.getTime?.() <= now
-      );
-
-      logger.info(`Found ${readyPosts.length} posts ready to publish`);
-      return readyPosts;
+      logger.info(`Found ${approvedPosts.length} approved posts`);
+      // const now = Date.now();
+      // const readyPosts = approvedPosts.filter(post => 
+      //   post.scheduledAt && post.scheduledAt?.getTime?.() <= now
+      // );
+      logger.info(`Found ${approvedPosts.length} posts ready to publish`);
+      return approvedPosts;
     } catch (error) {
       logger.error('Failed to get ready to publish posts:', error);
       throw error;
