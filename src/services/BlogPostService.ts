@@ -229,6 +229,11 @@ export class BlogPostService {
       // Invalidate cache
       cache.delByTag('posts');
       cache.del(`post:${postId}`);
+
+      if (updatedPost.status === 'PUBLISHED') {
+        await BlogIdeaService.updateIdeaStatus(idea.id, "USED");
+        logger.info('Updated idea status to USED', { ideaId: idea.id, postId });
+      }
       
       // Trigger N8N webhook when status is set to REGENRATE
       if (updates.status === 'REGENRATE') {
@@ -348,7 +353,7 @@ export class BlogPostService {
       if (post.status !== 'APPROVED' && post.status !== 'SCHEDULED') {
         throw new ValidationError('Only approved or scheduled posts can be published');
       }
-      await BlogIdeaService.updateIdea(idea.id, { isPublished: true, status: 'USED' });
+      await BlogIdeaService.updateIdea(idea.id, { status: 'USED' });
       return await this.updatePostStatus(postId, { 
         status: 'PUBLISHED',
         scheduledAt: new Date(Date.now())

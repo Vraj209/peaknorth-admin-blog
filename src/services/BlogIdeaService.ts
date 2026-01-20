@@ -162,7 +162,7 @@ export class BlogIdeaService {
       const ideaData = ideaDoc.data() as BlogIdea;
       if (ideaData.status === "USED") throw new ValidationError("Idea is already used");
       if (ideaData.status === "PROCESSING") throw new ValidationError("Idea is already processing");
-      await ideaRef.update({ status: "USED" });
+      await this.updateIdeaStatus(ideaId, "USED");
       logger.info("Idea marked as used", { ideaId });
       cache.delByTag("ideas");
     } catch (error) {
@@ -184,7 +184,7 @@ export class BlogIdeaService {
       }
 
       await ideaRef.update({
-        used: false,
+        status: "UNUSED",
         updatedAt: Date.now(),
       });
 
