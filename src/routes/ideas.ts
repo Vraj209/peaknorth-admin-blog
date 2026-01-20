@@ -102,7 +102,8 @@ router.get('/pick',
         error: 'No unused ideas available',
         timestamp: Date.now(),
       };
-      return res.status(404).json(response);
+      logger.info('No unused ideas available for picking');
+      return res.status(200).json(response);
     }
     
     const response: ApiResponse = {

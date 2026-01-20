@@ -121,7 +121,7 @@ export class BlogIdeaService {
   static async pickNextIdea(): Promise<BlogIdea | null> {
     try {
       const unusedIdeas = await this.getUnusedIdeas();
-      if (unusedIdeas.length == 0) {
+      if (unusedIdeas.length === 0) {
         logger.warn("No unused ideas available for picking");
         return null;
       }
