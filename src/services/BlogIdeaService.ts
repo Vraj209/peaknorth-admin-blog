@@ -7,10 +7,11 @@ import {
   Priority,
   IdeaStatus,
 } from "../types/blog";
-import { NotFoundError, ValidationError } from "../middleware/errorHandler";
+import { AppError, NotFoundError, ValidationError } from "../middleware/errorHandler";
 import { randomUUID } from "crypto";
 import logger from "../utils/logger";
 import cache from "../utils/cache";
+import { StatusCodes } from "http-status-codes";
 
 
 export class BlogIdeaService {
@@ -120,21 +121,10 @@ export class BlogIdeaService {
   static async pickNextIdea(): Promise<BlogIdea | null> {
     try {
       const unusedIdeas = await this.getUnusedIdeas();
-      logger.info(`Found ${unusedIdeas.length} unused ideas`);
-      if (unusedIdeas.length === 0) {
+      if (unusedIdeas.length == 0) {
         logger.warn("No unused ideas available for picking");
         return null;
       }
-
-      // Sort by priority: high -> medium -> low, then by creation date
-      const priorityOrder = { high: 3, medium: 2, low: 1 };
-      unusedIdeas.sort((a, b) => {
-        const priorityDiff =
-          priorityOrder[b.priority] - priorityOrder[a.priority];
-        if (priorityDiff !== 0) return priorityDiff;
-        return a.createdAt?.getTime?.() - b.createdAt?.getTime?.(); // Older first
-      });
-
       const selectedIdea = unusedIdeas[0];
       if (!selectedIdea) {
         return null;
@@ -152,7 +142,7 @@ export class BlogIdeaService {
       return selectedIdea;
     } catch (error) {
       logger.error("Failed to pick next idea:", error);
-      throw error;
+      throw new AppError("Failed to pick next idea", StatusCodes.INTERNAL_SERVER_ERROR, "FAILED_TO_PICK_NEXT_IDEA");
     }
   }
 
