@@ -264,7 +264,7 @@ export class BlogIdeaService {
       }
 
       const ideaData = ideaDoc.data() as BlogIdea;
-      if (ideaData.used) {
+      if (ideaData.status === "USED") {
         throw new ValidationError("Cannot delete an idea that has been used");
       }
 
@@ -293,8 +293,8 @@ export class BlogIdeaService {
 
       const stats: IdeaStats = {
         total: allIdeas.length,
-        used: allIdeas.filter((idea) => idea.used).length,
-        unused: allIdeas.filter((idea) => !idea.used).length,
+        processing: allIdeas.filter((idea) => idea.status === "PROCESSING").length,
+        unused: allIdeas.filter((idea) => idea.status === "UNUSED").length,
         byPriority: {
           high: allIdeas.filter((idea) => idea.priority === "high").length,
           medium: allIdeas.filter((idea) => idea.priority === "medium").length,
