@@ -5,6 +5,7 @@ import {
   UpdateIdeaRequest,
   IdeaStats,
   Priority,
+  IdeaStatus,
 } from "../types/blog";
 import { NotFoundError, ValidationError } from "../middleware/errorHandler";
 import { randomUUID } from "crypto";
@@ -52,9 +53,7 @@ export class BlogIdeaService {
    * Get all ideas with optional filtering
    */
   static async getAllIdeas(filters?: {
-    isBriefCreated?: boolean;
-    isApproved?: boolean;
-    isPublished?: boolean;
+    status?: IdeaStatus;
     priority?: Priority[];
     tags?: string[];
     search?: string;
@@ -108,11 +107,7 @@ export class BlogIdeaService {
    * Get unused ideas sorted by priority
    */
   static async getUnusedIdeas(): Promise<BlogIdea[]> {
-    return this.getAllIdeas({
-      isBriefCreated: false,
-      isApproved: false,
-      isPublished: false,
-    });
+    return await this.getAllIdeas({ status: "UNUSED" });
   }
 
   /**
@@ -140,6 +135,8 @@ export class BlogIdeaService {
       if (!selectedIdea) {
         return null;
       }
+
+      await this.updateIdeaStatus(selectedIdea.id, "PROCESSING");
 
       logger.info("Idea picked for content creation", {
         ideaId: selectedIdea.id,
@@ -340,6 +337,16 @@ export class BlogIdeaService {
       return idea;
     } catch (error) {
       logger.error("Failed to get idea by ID:", error);
+      throw error;
+    }
+  }
+
+  static async updateIdeaStatus(ideaId: string, status: IdeaStatus): Promise<void> {
+    try {
+      const ideaRef = db.collection(this.COLLECTION).doc(ideaId);
+      await ideaRef.update({ status });
+    } catch (error) {
+      logger.error("Failed to update idea status:", error);
       throw error;
     }
   }
