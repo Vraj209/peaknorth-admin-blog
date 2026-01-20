@@ -215,10 +215,11 @@ export class BlogPostService {
         await postRef.update({ status: 'OUTLINE' });
         await BlogIdeaService.updateIdea(idea.id, { isBriefCreated: true });
         logger.info('Auto-updated post status to OUTLINE', { postId });
-      } else if (updates.draft?.mdx && currentPost.status === 'OUTLINE') {
-        await postRef.update({ status: 'DRAFT' });
-        logger.info('Auto-updated post status to DRAFT', { postId });
       } 
+      // else if (updates.draft?.mdx && currentPost.status === 'OUTLINE') {
+      //   await postRef.update({ status: 'DRAFT' });
+      //   logger.info('Auto-updated post status to DRAFT', { postId });
+      // } 
     
 
       // Get updated post
