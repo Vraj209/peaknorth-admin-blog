@@ -491,13 +491,12 @@ export class BlogPostService {
   private static validateStatusTransition(currentStatus: PostStatus, newStatus: PostStatus): void {
     const validTransitions: Record<PostStatus, PostStatus[]> = {
       BRIEF: ['OUTLINE', 'DRAFT', 'REGENRATE'],
-      OUTLINE: ['DRAFT', 'BRIEF', 'REGENRATE'],
+      OUTLINE: ['DRAFT', 'BRIEF', 'REGENRATE','NEEDS_REVIEW'],
       DRAFT: ['NEEDS_REVIEW', 'OUTLINE', 'REGENRATE'],
       NEEDS_REVIEW: ['APPROVED', 'DRAFT', 'REGENRATE'],
       APPROVED: ['SCHEDULED', 'PUBLISHED', 'DRAFT', 'REGENRATE'],
       SCHEDULED: ['PUBLISHED', 'APPROVED', 'REGENRATE'],
-      PUBLISHED: ['UNPUBLISHED'], // Published posts can only be unpublished
-      UNPUBLISHED: ['PUBLISHED', 'DRAFT', 'REGENRATE'], // Unpublished posts can be republished or edited
+      PUBLISHED: ['PUBLISHED', 'REGENRATE'], // Published posts can only be republished or regenerated
       REGENRATE: ['BRIEF', 'OUTLINE', 'DRAFT', 'NEEDS_REVIEW'], // Regenerated posts can go back to earlier stages
     };
 
