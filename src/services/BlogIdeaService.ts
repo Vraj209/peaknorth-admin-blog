@@ -53,15 +53,15 @@ export class BlogIdeaService {
    * Get all ideas with optional filtering
    */
   static async getAllIdeas(filters?: {
-    status?: IdeaStatus;
+    status?: { [key in IdeaStatus]?: boolean };
     priority?: Priority[];
     tags?: string[];
     search?: string;
   }): Promise<BlogIdea[]> {
     try {
-      const cacheKey = `ideas:all:${JSON.stringify(filters || {})}`;
-      const cached = cache.get<BlogIdea[]>(cacheKey);
-      if (cached) return cached;
+      // const cacheKey = `ideas:all:${JSON.stringify(filters || {})}`;
+      // const cached = cache.get<BlogIdea[]>(cacheKey);
+      // if (cached) return cached;
 
       let query = db.collection(this.COLLECTION).orderBy("createdAt", "desc");
 
@@ -95,7 +95,7 @@ export class BlogIdeaService {
         );
       }
 
-      cache.set(cacheKey, ideas, { ttl: this.CACHE_TTL, tags: ["ideas"] });
+      // cache.set(cacheKey, ideas, { ttl: this.CACHE_TTL, tags: ["ideas"] });
       return ideas;
     } catch (error) {
       logger.error("Failed to get ideas:", error);
@@ -108,9 +108,10 @@ export class BlogIdeaService {
    */
   static async getUnusedIdeas(): Promise<BlogIdea[]> {
     logger.info("Getting unused ideas");
-    const ideas = await this.getAllIdeas({ status: "UNUSED" });
-    logger.info(`Found ${ideas.length} unused ideas`);
-    return ideas;
+    const ideas = await this.getAllIdeas()
+    const unusedIdeas = ideas.filter((idea) => idea.status === "UNUSED");
+    logger.info(`Found ${unusedIdeas.length} unused ideas`);
+    return unusedIdeas;
   }
 
   /**
