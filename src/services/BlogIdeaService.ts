@@ -125,19 +125,25 @@ export class BlogIdeaService {
         logger.warn("No unused ideas available for picking");
         return null;
       }
-      const selectedIdea = unusedIdeas[0];
+      // check out priority
+      const priorityOrder: Record<Priority, number> = { high: 3, medium: 2, low: 1 };
+      const sortedIdeas = unusedIdeas.sort((a, b) => {
+        const priorityDiff =
+          priorityOrder[b.priority as Priority] - priorityOrder[a.priority as Priority];
+        if (priorityDiff !== 0) return priorityDiff;
+        return a.createdAt?.getTime?.() - b.createdAt?.getTime?.(); // Older first
+      });
+      const selectedIdea = sortedIdeas[0];
       if (!selectedIdea) {
         return null;
       }
-      logger.info("Updating idea status to PROCESSING", { ideaId: selectedIdea.id });
-
+    
       logger.info("Idea picked for content creation", {
         ideaId: selectedIdea.id,
         topic: selectedIdea.topic,
         priority: selectedIdea.priority,
       });
 
-      logger.info("Idea picked for content creation", { ideaId: selectedIdea.id });
       return selectedIdea;
     } catch (error) {
       logger.error("Failed to pick next idea:", error);
