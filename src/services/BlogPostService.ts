@@ -46,6 +46,7 @@ export class BlogPostService {
         ...(postData.category && { category: postData.category }),
           
       };
+      await BlogIdeaService.updateIdeaStatus(postData.ideaId as string, "PROCESSING");
       await db.collection(this.COLLECTION).doc(post.id).set(post);
       
       // Invalidate cache - delete all posts from cache

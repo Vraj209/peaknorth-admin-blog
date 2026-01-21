@@ -130,7 +130,6 @@ export class BlogIdeaService {
         return null;
       }
       logger.info("Updating idea status to PROCESSING", { ideaId: selectedIdea.id });
-      await this.updateIdeaStatus(selectedIdea.id, "PROCESSING");
 
       logger.info("Idea picked for content creation", {
         ideaId: selectedIdea.id,
