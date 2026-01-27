@@ -392,6 +392,7 @@ export class BlogPostService {
           SCHEDULED: allPosts.filter(p => p.status === 'SCHEDULED').length,
           PUBLISHED: allPosts.filter(p => p.status === 'PUBLISHED').length,
           REGENRATE: allPosts.filter(p => p.status === 'REGENRATE').length,
+          UNPUBLISHED: allPosts.filter(p => p.status === 'UNPUBLISHED').length,
         },
       };
 
