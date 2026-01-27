@@ -505,8 +505,9 @@ export class BlogPostService {
       NEEDS_REVIEW: ['APPROVED', 'DRAFT', 'REGENRATE'],
       APPROVED: ['SCHEDULED', 'PUBLISHED', 'DRAFT', 'REGENRATE'],
       SCHEDULED: ['PUBLISHED', 'APPROVED', 'REGENRATE'],
-      PUBLISHED: ['PUBLISHED', 'REGENRATE'], // Published posts can only be republished or regenerated
+      PUBLISHED: ['PUBLISHED', 'REGENRATE', 'UNPUBLISHED'], // Published posts can only be republished or regenerated
       REGENRATE: ['BRIEF', 'OUTLINE', 'DRAFT', 'NEEDS_REVIEW'], // Regenerated posts can go back to earlier stages
+      UNPUBLISHED: ['PUBLISHED', 'REGENRATE'], // Unpublished posts can only be republished or regenerated
     };
 
     const allowedTransitions = validTransitions[currentStatus];

@@ -8,6 +8,7 @@ export type PostStatus =
   | 'APPROVED' 
   | 'SCHEDULED' 
   | 'PUBLISHED'
+  | 'UNPUBLISHED'
   | 'REGENRATE';
 
 export type IdeaStatus = 'UNUSED' | 'PROCESSING' |'USED';
