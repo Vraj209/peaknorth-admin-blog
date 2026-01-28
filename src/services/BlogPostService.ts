@@ -525,7 +525,7 @@ export class BlogPostService {
       APPROVED: ['SCHEDULED', 'PUBLISHED', 'DRAFT', 'REGENRATE'],
       SCHEDULED: ['PUBLISHED', 'APPROVED', 'REGENRATE'],
       PUBLISHED: ['PUBLISHED', 'REGENRATE', 'UNPUBLISHED'], // Published posts can only be republished or regenerated
-      REGENRATE: ['BRIEF', 'OUTLINE', 'DRAFT', 'NEEDS_REVIEW'], // Regenerated posts can go back to earlier stages
+      REGENRATE: ['REGENRATE','BRIEF', 'OUTLINE', 'DRAFT', 'NEEDS_REVIEW'], // Regenerated posts can go back to earlier stages
       UNPUBLISHED: ['PUBLISHED', 'REGENRATE'], // Unpublished posts can only be republished or regenerated
     };
 
