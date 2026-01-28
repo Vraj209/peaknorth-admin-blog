@@ -172,6 +172,24 @@ export class BlogPostService {
     }
   }
   
+  /**
+   *  Get Regenerated Post by Post ID
+   * @param postId 
+   * @returns 
+   */
+  static async getRegeneratedPostByPostId(postId: string): Promise<BlogPost> {
+    try {
+      const post = await this.getPostById(postId);
+      if (post.status !== 'REGENRATE') {
+        throw new NotFoundError(`Post with ID '${postId}' is not regenerated`);
+      }
+      return post;
+    } catch (error) {
+      logger.error('Failed to get regenerated post by post ID:', error);
+      throw error;
+    }
+  }
+
   // based on post id get the idea
   static async getIdeaByPostId(postId: string): Promise<BlogIdea> {
       const postRef = db.collection(this.COLLECTION).doc(postId);

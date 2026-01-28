@@ -150,6 +150,26 @@ router.get('/:id',
     res.json(response);
   })
 );
+
+/**
+ * @route   GET /api/posts/:id/regenerated
+ * @desc    Get a regenerated post by ID
+ * @access  Public (with optional API key)
+ */
+router.get('/:id/regenerated',
+  optionalApiKey,
+  validateParams(idParamSchema),
+  asyncHandler(async (req, res) => {  
+    const post = await BlogPostService.getRegeneratedPostByPostId(req.params.id!);
+    const response: ApiResponse = {
+      success: true,
+      data: post,
+      timestamp: Date.now(),
+    };
+    res.json(response);
+  })
+);
+
 // Important to look into
 /**
  * @route   PUT /api/posts/:id
